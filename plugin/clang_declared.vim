@@ -14,6 +14,8 @@ let g:clang_declared_debug_mode = get(g:, "clang_declared_debug_mode", 0)
 
 command! -nargs=0 ClangDeclaredOpen :call clang_declared#open("edit", expand("%"), getpos(".")[1], getpos(".")[2])
 
+command! -nargs=0 ClangDeclaredOpenTab :call clang_declared#open("tabnew", expand("%"), getpos(".")[1], getpos(".")[2])
+
 command! -nargs=0 ClangDeclaredOpenTabDrop :call clang_declared#open("tab drop", expand("%"), getpos(".")[1], getpos(".")[2])
 
 
