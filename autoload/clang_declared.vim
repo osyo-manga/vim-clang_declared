@@ -6,7 +6,7 @@ function! s:c_index_test(filename, lnum, col)
 	let file = a:filename
 	let file_path = fnamemodify(a:filename, ":p")
 	let options = join(map(filter(split(&path, ","), "isdirectory(v:val)"), "'-I'.v:val"), " ")
-	let cmd = g:clang_declared_c_index_test_cmd." -cursor-at=".file_path.":".(a:lnum).":".(a:col)."  ".options." ".g:clnag_declared_c_index_test_option." ".file
+	let cmd = g:clang_declared_c_index_test_cmd." -cursor-at=".file_path.":".(a:lnum).":".(a:col)."  ".options." ".g:clang_declared_c_index_test_option." ".file
 	return system(cmd)
 endfunction
 

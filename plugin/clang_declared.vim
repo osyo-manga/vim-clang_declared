@@ -8,7 +8,7 @@ set cpo&vim
 
 
 let g:clang_declared_c_index_test_cmd = get(g:, "clang_declared_c_index_test_cmd", "c-index-test.exe")
-let g:clnag_declared_c_index_test_option = get(g:, "clang_declared_c_index_test_option", "")
+let g:clang_declared_c_index_test_option = get(g:, "clang_declared_c_index_test_option", "")
 let g:clang_declared_debug_mode = get(g:, "clang_declared_debug_mode", 0)
 
 
