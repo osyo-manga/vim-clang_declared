@@ -26,20 +26,12 @@ function! clang_declared#parse_c_index_test_result(result)
 endfunction
 
 
-function! clang_declared#search(filename, lnum, col)
-	let result = s:c_index_test(a:filename, a:lnum, a:col)
-	if g:clang_declared_debug_mode
-		echo result
-	endif
-
-	let declared_pos = clang_declared#parse_c_index_test_result(result)
-	if empty(declared_pos)
-		return {}
-	endif
-
+function! clang_declared#search_file_pos(include_dirs, filename, declared_pos)
+	let declared_pos = a:declared_pos
 	let func_name = expand("<cword>")
-	let includes = neocomplcache#sources#include_complete#get_current_include_files()
-	for header in includes+[a:filename]
+	let include_dirs = a:include_dirs
+
+	for header in include_dirs+[a:filename]
 		let lines = readfile(header)
 		if len(lines) >= declared_pos.lnum
 \		&& len(lines[declared_pos.lnum-1]) >= declared_pos.col
@@ -57,18 +49,39 @@ function! clang_declared#search(filename, lnum, col)
 endfunction
 
 
-function! clang_declared#open(open_cmd, filename, lnum, col)
+function! clang_declared#search(filename, lnum, col)
 	echo "Search declared..."
-	let declared = clang_declared#search(expand("%"), getpos(".")[1], getpos(".")[2])
-	if empty(declared)
+	let result = s:c_index_test(a:filename, a:lnum, a:col)
+	if g:clang_declared_debug_mode
+		echo result
+	endif
+
+	let declared_pos = clang_declared#parse_c_index_test_result(result)
+	if empty(declared_pos)
 		echo "Not found"
+		return {}
+	endif
+	return clang_declared#search_file_pos(neocomplcache#sources#include_complete#get_current_include_files(), a:filename, declared_pos)
+endfunction
+
+
+function! clang_declared#open_declared(open_cmd, srcfile, declared)
+	let declared = a:declared
+	if empty(declared)
 		return
 	endif
-	if a:filename != declared.filename
+	if a:srcfile != declared.filename
 		execute a:open_cmd." ".substitute(declared.filename, "\\", "/", "g")
 	endif
 	
 	call cursor(declared.lnum, declared.col)
+	normal! zz
+endfunction
+
+
+function! clang_declared#open(open_cmd, srcfile, lnum, col)
+	let declared = clang_declared#search(expand("%"), getpos(".")[1], getpos(".")[2])
+	return clang_declared#open_declared(a:open_cmd, a:srcfile, declared)
 endfunction
 
 
