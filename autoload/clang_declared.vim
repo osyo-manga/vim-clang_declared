@@ -2,9 +2,9 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-function! s:c_index_test(filename, lnum, col)
-	let file = a:filename
-	let file_path = fnamemodify(a:filename, ":p")
+function! s:c_index_test(srcfile, lnum, col)
+	let file = a:srcfile
+	let file_path = fnamemodify(a:srcfile, ":p")
 	let options = join(map(filter(split(&path, ","), "isdirectory(v:val)"), "'-I'.v:val"), " ")
 	let cmd = g:clang_declared_c_index_test_cmd." -cursor-at=".file_path.":".(a:lnum).":".(a:col)."  ".options." ".g:clang_declared_c_index_test_option." ".file
 	return system(cmd)
@@ -49,9 +49,9 @@ function! clang_declared#search_file_pos(include_dirs, filename, declared_pos)
 endfunction
 
 
-function! clang_declared#search(filename, lnum, col)
+function! clang_declared#search(srcfile, lnum, col)
 	echo "Search declared..."
-	let result = s:c_index_test(a:filename, a:lnum, a:col)
+	let result = s:c_index_test(a:srcfile, a:lnum, a:col)
 	if g:clang_declared_debug_mode
 		echo result
 	endif
@@ -61,7 +61,7 @@ function! clang_declared#search(filename, lnum, col)
 		echo "Not found"
 		return {}
 	endif
-	return clang_declared#search_file_pos(neocomplcache#sources#include_complete#get_current_include_files(), a:filename, declared_pos)
+	return clang_declared#search_file_pos(neocomplcache#sources#include_complete#get_current_include_files(), a:srcfile, declared_pos)
 endfunction
 
 
